@@ -1,2 +1,2 @@
-# unik_test_service
-A test service for running IncludeOS with Unik
+# Unik / IncludeOS test service
+An IncludeOS test service for building and running with Unik
