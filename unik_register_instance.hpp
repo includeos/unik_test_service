@@ -80,21 +80,30 @@ namespace unik {
 	    // Parse Unik instance listener IP address
 	    // @note : IncludeOS lacks facilities to construct IP from string (we use e.g. {192,168,0,1})
 	    // Issue #687 will fix this.
-	    std::regex re_ip {"([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3}).([0-9]{1,3})"};
-	    std::smatch ip_part;
-	    auto match = std::regex_match(ip_str, ip_part, re_ip);
+	    const std::regex ip_address_pattern
+	    {
+	      "^(25[0–5]|2[0–4]\\d|[01]?\\d\\d?)\\."
+          "(25[0–5]|2[0–4]\\d|[01]?\\d\\d?)\\."
+          "(25[0–5]|2[0–4]\\d|[01]?\\d\\d?)\\."
+          "(25[0–5]|2[0–4]\\d|[01]?\\d\\d?)$"
+	    };
+
+	    std::smatch ip_parts;
 	    
-	    if (not match) {
-	      INFO("Unik client","Couldn't parse IP address \n");
+	    if (not std::regex_match(ip_str, ip_parts, ip_address_pattern)) {
+	      INFO("Unik client","Couldn't parse IP address\n");
 	      return;
-	    } 
+	    }
 	    
-	    net::IP4::addr ip{
-	      static_cast<uint8_t>(std::stoi(ip_part[1])),
-		static_cast<uint8_t>(std::stoi(ip_part[2])),
-		static_cast<uint8_t>(std::stoi(ip_part[3])),
-		static_cast<uint8_t>(std::stoi(ip_part[4]))};
-	    net::TCP::Socket unik_instance_listener { ip , 3000};
+	    net::IP4::addr ip
+	    {
+	      static_cast<uint8_t>(std::stoi(ip_parts[1])),
+		  static_cast<uint8_t>(std::stoi(ip_parts[2])),
+		  static_cast<uint8_t>(std::stoi(ip_parts[3])),
+		  static_cast<uint8_t>(std::stoi(ip_parts[4]))
+		};
+
+	    net::TCP::Socket unik_instance_listener {ip , 3000};
 	    
 	    attempts_left --;
 	    INFO("Unik client", "Connecting to UniK instance listener %s:%i (attempt %i / %i) \n", 
