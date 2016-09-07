@@ -16,28 +16,19 @@
 // limitations under the License.
 
 #include <os>
-#include <stdio.h>
-#include <info>
-#include <vga>
+#include <net/inet4>
 
-#include <unik>
+constexpr int port {8080};
 
-ConsoleVGA vga;
+void Service::start(const std::string&) {
+  using namespace std::string_literals;
 
-using namespace std::chrono;
-
-
-void Service::start()
-{  
-
-  // Route stdout to both serial port and VGA
-  OS::set_rsprint([] (const char* data, size_t len) {
-      vga.write(data, len);
-      OS::default_rsprint(data, len);
+  auto& server = net::Inet4::stack().tcp().bind(port);
+  server.on_connect([] (auto conn) {
+    conn->on_read(1024, [conn] (auto buf, size_t n) {
+      auto response {"My first unikernel!\n"s};
+      conn->write(response);
+      conn->close();
     });
-
-  INFO("Service","IncludeOS booted. Registering to Unik instance listener\n");
-  
-  unik::register_instance();
-  
+  });
 }

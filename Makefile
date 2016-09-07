@@ -3,8 +3,8 @@
 #################################################
 
 # The name of your service
-SERVICE = IncludeOS_Demo_Service
-SERVICE_NAME = IncludeOS Demo Service
+SERVICE = IncludeOS_service
+SERVICE_NAME = My IncludeOS Service
 
 # Your service parts
 FILES = service.cpp
@@ -12,8 +12,13 @@ FILES = service.cpp
 # Your disk image
 DISK=
 
+# Add networking driver
+DRIVERS=virtionet
+
 # Your own include-path
-LOCAL_INCLUDES=-I./unik -I.
+LOCAL_INCLUDES=
+
+PLATFORM=unik
 
 # IncludeOS location
 ifndef INCLUDEOS_INSTALL
